@@ -41,9 +41,9 @@ impl Socket {
     /// slice should not be longer than `MAX_BYTES_OUT` otherwise the receiving
     /// end may lose some data.
     pub fn send_msg(&self, bytes: &[u8], fds: &[OwnedFd]) -> IoResult<usize> {
-        #[cfg(not(target_os = "macos"))]
+        #[cfg(not(any(target_os = "macos", target_os = "redox")))]
         let flags = SendFlags::DONTWAIT | SendFlags::NOSIGNAL;
-        #[cfg(target_os = "macos")]
+        #[cfg(any(target_os = "macos", target_os = "redox"))]
         let flags = SendFlags::DONTWAIT;
 
         if !fds.is_empty() {
@@ -72,9 +72,9 @@ impl Socket {
     /// slice `MAX_FDS_OUT` long, otherwise some data of the received message may
     /// be lost.
     pub fn rcv_msg(&self, buffer: &mut [u8], fds: &mut VecDeque<OwnedFd>) -> IoResult<usize> {
-        #[cfg(not(target_os = "macos"))]
+        #[cfg(not(any(target_os = "macos", target_os = "redox")))]
         let flags = RecvFlags::DONTWAIT | RecvFlags::CMSG_CLOEXEC;
-        #[cfg(target_os = "macos")]
+        #[cfg(any(target_os = "macos", target_os = "redox"))]
         let flags = RecvFlags::DONTWAIT;
 
         let mut cmsg_space = [MaybeUninit::uninit(); rustix::cmsg_space!(ScmRights(MAX_FDS_OUT))];

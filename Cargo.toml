@@ -15,3 +15,6 @@ members = [
     "wayland-sys",
     "wayland-tests",
 ]
+
+[patch.crates-io]
+rustix = { git = "https://github.com/bytecodealliance/rustix" }
