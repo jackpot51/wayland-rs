@@ -86,6 +86,9 @@ impl Connection {
             UnixStream::connect(socket_path).map_err(|_| ConnectError::NoCompositor)?
         };
 
+        //TODO: support MSG_DONTWAIT on Redox
+        let _ = stream.set_nonblocking(true);
+
         let backend = Backend::connect(stream).map_err(|_| ConnectError::NoWaylandLib)?;
         Ok(Self { backend })
     }
