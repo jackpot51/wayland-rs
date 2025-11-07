@@ -71,7 +71,8 @@ impl Dispatch<wl_registry::WlRegistry, ()> for State {
 
                     let (init_w, init_h) = (320, 240);
 
-                    let mut file = tempfile::tempfile().unwrap();
+                    let (mut file, _path) = tempfile::NamedTempFile::new().unwrap().keep().unwrap();
+                    //TODO: let mut file = tempfile::tempfile().unwrap() not working on RedoxFS
                     draw(&mut file, (init_w, init_h));
                     let pool = shm.create_pool(file.as_fd(), (init_w * init_h * 4) as i32, qh, ());
                     let buffer = pool.create_buffer(
